@@ -26,6 +26,7 @@ const TOKENS_COUNT_FACTORS: TokensCountFactors = (5, 2);
 pub struct GeminiConfig {
     pub name: Option<String>,
     pub api_key: Option<String>,
+    pub api_base: Option<String>,
     pub extra: Option<ExtraConfig>,
 }
 
@@ -80,7 +81,11 @@ impl GeminiClient {
 
         let model = self.model.name.clone();
 
-        let url = format!("{API_BASE}{}:{}?key={}", model, func, api_key);
+        let url = if let Some(api_base) = &self.config.api_base {
+            format!("{api_base}{}:{}?key={}", model, func, api_key)
+        } else {
+            format!("{API_BASE}{}:{}?key={}", model, func, api_key)
+        };
 
         debug!("Gemini Request: {url} {body}");
 
